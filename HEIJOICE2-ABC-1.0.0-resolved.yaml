@@ -1,0 +1,316 @@
+openapi: 3.1.0
+info:
+  title: Library Management API
+  description: This API allows for the management of books and authors in a library system.
+  version: 1.0.0
+servers:
+- url: https://mock.swaggerhub.com/HEIJOICE2/Library.yaml/1.0.0
+  description: Mock Server
+paths:
+  /books:
+    get:
+      summary: Get all books
+      description: Retrieve a list of all books with optional filters by bookName and releaseDate.
+      parameters:
+      - name: bookName
+        in: query
+        description: Filter books by name
+        required: false
+        schema:
+          type: string
+      - name: releaseDate
+        in: query
+        description: Filter books by release date (provide a date range)
+        required: false
+        schema:
+          type: string
+          format: date
+      responses:
+        "200":
+          description: A list of books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                  - id
+                  - bookName
+                  - releaseDate
+                  - author
+                  properties:
+                    id:
+                      type: integer
+                      description: Unique identifier for the book
+                    bookName:
+                      type: string
+                      description: The name of the book
+                    author:
+                      type: string
+                      description: Name of the author (this will just be a string in v1.0.0)
+                    pageNumbers:
+                      type: integer
+                      description: The number of pages in the book
+                    topic:
+                      type: string
+                      enum:
+                      - ROMANCE
+                      - COMEDY
+                      - OTHER
+                      description: The genre/topic of the book
+                    releaseDate:
+                      type: string
+                      format: date
+                      description: The release date of the book
+    post:
+      summary: Add a new book
+      description: Create a new book record.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - id
+              - bookName
+              - releaseDate
+              - author
+              properties:
+                id:
+                  type: integer
+                  description: Unique identifier for the book
+                bookName:
+                  type: string
+                  description: The name of the book
+                author:
+                  type: string
+                  description: Name of the author (this will just be a string in v1.0.0)
+                pageNumbers:
+                  type: integer
+                  description: The number of pages in the book
+                topic:
+                  type: string
+                  enum:
+                  - ROMANCE
+                  - COMEDY
+                  - OTHER
+                  description: The genre/topic of the book
+                releaseDate:
+                  type: string
+                  format: date
+                  description: The release date of the book
+      responses:
+        "201":
+          description: Book created successfully
+    put:
+      summary: Update a book
+      description: Update an existing book record. The request is idempotent.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - id
+              - bookName
+              - releaseDate
+              - author
+              properties:
+                id:
+                  type: integer
+                  description: Unique identifier for the book
+                bookName:
+                  type: string
+                  description: The name of the book
+                author:
+                  type: string
+                  description: Name of the author (this will just be a string in v1.0.0)
+                pageNumbers:
+                  type: integer
+                  description: The number of pages in the book
+                topic:
+                  type: string
+                  enum:
+                  - ROMANCE
+                  - COMEDY
+                  - OTHER
+                  description: The genre/topic of the book
+                releaseDate:
+                  type: string
+                  format: date
+                  description: The release date of the book
+      responses:
+        "200":
+          description: Book updated successfully
+    delete:
+      summary: Delete a book
+      description: Delete a book by its ID.
+      parameters:
+      - name: bookId
+        in: path
+        description: ID of the book to delete
+        required: true
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Book deleted successfully
+  /authors:
+    get:
+      summary: Get all authors
+      description: Retrieve a list of all authors with optional filter by authorName.
+      parameters:
+      - name: authorName
+        in: query
+        description: Filter authors by name
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A list of authors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                  - id
+                  - name
+                  properties:
+                    id:
+                      type: integer
+                      description: Unique identifier for the author
+                    name:
+                      type: string
+                      description: Name of the author
+                    sex:
+                      type: string
+                      enum:
+                      - M
+                      - F
+                      description: "The sex of the author (M for Male, F for Female)"
+    post:
+      summary: Add a new author
+      description: Create a new author record.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - id
+              - name
+              properties:
+                id:
+                  type: integer
+                  description: Unique identifier for the author
+                name:
+                  type: string
+                  description: Name of the author
+                sex:
+                  type: string
+                  enum:
+                  - M
+                  - F
+                  description: "The sex of the author (M for Male, F for Female)"
+      responses:
+        "201":
+          description: Author created successfully
+    put:
+      summary: Update an author
+      description: Update an existing author record. The request is idempotent.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - id
+              - name
+              properties:
+                id:
+                  type: integer
+                  description: Unique identifier for the author
+                name:
+                  type: string
+                  description: Name of the author
+                sex:
+                  type: string
+                  enum:
+                  - M
+                  - F
+                  description: "The sex of the author (M for Male, F for Female)"
+      responses:
+        "200":
+          description: Author updated successfully
+    delete:
+      summary: Delete an author
+      description: Delete an author by their ID.
+      parameters:
+      - name: authorId
+        in: path
+        description: ID of the author to delete
+        required: true
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Author deleted successfully
+components:
+  schemas:
+    Book:
+      type: object
+      required:
+      - id
+      - bookName
+      - releaseDate
+      - author
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the book
+        bookName:
+          type: string
+          description: The name of the book
+        author:
+          type: string
+          description: Name of the author (this will just be a string in v1.0.0)
+        pageNumbers:
+          type: integer
+          description: The number of pages in the book
+        topic:
+          type: string
+          enum:
+          - ROMANCE
+          - COMEDY
+          - OTHER
+          description: The genre/topic of the book
+        releaseDate:
+          type: string
+          format: date
+          description: The release date of the book
+    Author:
+      type: object
+      required:
+      - id
+      - name
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the author
+        name:
+          type: string
+          description: Name of the author
+        sex:
+          type: string
+          enum:
+          - M
+          - F
+          description: "The sex of the author (M for Male, F for Female)"
