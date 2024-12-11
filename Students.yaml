@@ -1,0 +1,226 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Students_Management
+  description: Une API pour gérer les informations des étudiants au sein d'une institution.
+
+paths:
+  /groups:
+    get:
+      summary: Obtenir tous les groupes
+      description: Récupérer la liste de tous les groupes avec filtres optionnels par nom de groupe et année.
+      parameters:
+        - name: groupName
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: groupYear
+          in: query
+          description: Filtrer les groupes par intervalle d'années (ex. 2020-2021)
+          required: false
+          schema:
+            type: string
+            pattern: '^\d{4}-\d{4}$'
+      responses:
+        '200':
+          description: Liste des groupes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+    post:
+      summary: Ajouter un nouveau groupe
+      description: Créer un nouveau groupe.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+      responses:
+        '201':
+          description: Groupe créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+    put:
+      summary: Mettre à jour un groupe
+      description: Mettre à jour un groupe existant. La requête est idempotente.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+      responses:
+        '200':
+          description: Groupe mis à jour avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+    delete:
+      summary: Supprimer un groupe
+      description: Supprimer un groupe par son ID.
+      parameters:
+        - name: groupId
+          in: path
+          description: ID du groupe à supprimer
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Groupe supprimé avec succès
+
+  /students:
+    get:
+      summary: Obtenir tous les étudiants
+      description: Récupérer la liste de tous les étudiants avec filtre optionnel par nom.
+      parameters:
+        - name: studentName
+          in: query
+          description: Filtrer les étudiants par nom
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Liste des étudiants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+    post:
+      summary: Ajouter un nouvel étudiant
+      description: Créer un nouvel étudiant.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '201':
+          description: Étudiant créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+    put:
+      summary: Mettre à jour un étudiant
+      description: Mettre à jour un étudiant existant. La requête est idempotente.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '200':
+          description: Étudiant mis à jour avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+    delete:
+      summary: Supprimer un étudiant
+      description: Supprimer un étudiant par son ID.
+      parameters:
+        - name: studentId
+          in: path
+          description: ID de l'étudiant à supprimer
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Étudiant supprimé avec succès
+
+components:
+  schemas:
+    Group:
+      type: object
+      required:
+        - id
+        - groupName
+        - groupYear
+        - promotion
+        - studentNb
+      properties:
+        id:
+          type: integer
+          description: Identifiant unique du groupe
+        groupName:
+          type: string
+          description: Nom du groupe (ex. J2)
+          example: J2
+        groupYear:
+          type: integer
+          description: Année académique
+          example: 2024
+        promotion:
+          type: string
+          enum: [G, H, J, K]
+          description: Code de la promotion
+        studentNb:
+          type: integer
+          description: Nombre d'étudiants dans le groupe
+          example: 45
+        students:
+          type: array
+          description: Liste des étudiants dans le groupe
+          items:
+            $ref: '#/components/schemas/Student'
+        createdAt:
+          type: string
+          format: date-time
+          description: Date de création du groupe
+        updatedAt:
+          type: string
+          format: date-time
+          description: Date de dernière mise à jour du groupe
+
+    Student:
+      type: object
+      required:
+        - id
+        - name
+        - sex
+        - birthdate
+        - reference
+        - group
+      properties:
+        id:
+          type: integer
+          description: Identifiant unique de l'étudiant
+        name:
+          type: string
+          description: Nom complet de l'étudiant
+          example: John Doe
+        sex:
+          type: string
+          enum: [M, F]
+          description: Genre de l'étudiant (M pour Masculin, F pour Féminin)
+        birthdate:
+          type: string
+          format: date
+          description: Date de naissance de l'étudiant (format "2000-01-01")
+        reference:
+          type: string
+          description: Numéro de référence de l'étudiant (ex. STD23XXX)
+          pattern: '^STD\d{2}[A-Z]{3}$'
+        group:
+          type: string
+          description: Groupe de l'étudiant (ex. J2)
+          example: J2
+
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/HEIJOICE2/Students/1.0.0
